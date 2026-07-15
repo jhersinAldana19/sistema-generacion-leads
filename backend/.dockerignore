@@ -1,0 +1,9 @@
+.venv/
+.env
+dev.db
+exports/
+spike/screenshots*/
+spike/*.json
+spike/__pycache__/
+__pycache__/
+*.pyc

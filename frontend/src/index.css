@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-brand: #003558;
+  --color-brand-dark: #002540;
+  --color-status-confirmed: #16a34a;
+  --color-status-review: #ea580c;
+  --color-status-discarded: #dc2626;
+  --color-status-candidate: #64748b;
+  --color-status-probable: #2563eb;
+  --color-status-outdated: #a16207;
+
+  /* Modo oscuro: azul Tecport, nunca negro */
+  --color-dark-bg: #03233b;
+  --color-dark-surface: #0a3454;
+  --color-dark-surface-hover: #0f4064;
+  --color-dark-border: #1c4f74;
+  --color-dark-text: #eaf2f8;
+  --color-dark-text-muted: #9fbdd4;
+}
+
+body {
+  margin: 0;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+html.dark body {
+  background-color: var(--color-dark-bg);
+}
