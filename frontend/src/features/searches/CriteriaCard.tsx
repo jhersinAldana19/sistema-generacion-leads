@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Search } from 'lucide-react'
+import { Search, Star } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { Badge } from '@/components/ui/badge'
@@ -48,12 +48,16 @@ export function CriteriaCard({
   onConfirm,
   isConfirming = false,
   readOnly = false,
+  isFavorite,
+  onToggleFavorite,
 }: {
   criteria: SearchCriteria
   changeSummary?: string | null
   onConfirm?: (criteria: SearchCriteria) => void
   isConfirming?: boolean
   readOnly?: boolean
+  isFavorite?: boolean
+  onToggleFavorite?: () => void
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const { register, handleSubmit, watch, setValue } = useForm<CriteriaFormValues>({
@@ -90,7 +94,18 @@ export function CriteriaCard({
             </span>
             <CardTitle>Entendí tu búsqueda</CardTitle>
           </div>
-          <Badge variant="probable">{ENTITY_TYPE_LABEL[criteria.entity_type] ?? criteria.entity_type}</Badge>
+          <div className="flex items-center gap-2">
+            {onToggleFavorite && (
+              <button
+                onClick={onToggleFavorite}
+                aria-label={isFavorite ? 'Quitar de favoritos' : 'Marcar como favorita'}
+                className="text-gray-300 hover:text-status-outdated dark:text-dark-text-muted"
+              >
+                <Star className={isFavorite ? 'size-4 fill-status-outdated text-status-outdated' : 'size-4'} />
+              </button>
+            )}
+            <Badge variant="probable">{ENTITY_TYPE_LABEL[criteria.entity_type] ?? criteria.entity_type}</Badge>
+          </div>
         </div>
         <p className="text-sm text-gray-600 dark:text-dark-text-muted">{criteria.summary_es}</p>
         {changeSummary && (

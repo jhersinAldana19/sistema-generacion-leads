@@ -52,6 +52,7 @@ export interface Search {
   status: SearchStatusValue
   criteria_json: SearchCriteria
   max_results: number
+  is_favorite: boolean
   created_at: string
   started_at: string | null
   completed_at: string | null

@@ -48,6 +48,7 @@ class SearchOut(BaseModel):
     status: str
     criteria_json: dict
     max_results: int
+    is_favorite: bool = False
     created_at: datetime
     started_at: datetime | None = None
     completed_at: datetime | None = None
@@ -58,6 +59,10 @@ class SearchOut(BaseModel):
 
 class SearchListItemOut(SearchOut):
     result_count: int
+
+
+class SearchFavoriteUpdate(BaseModel):
+    is_favorite: bool
 
 
 class SearchStatusOut(BaseModel):

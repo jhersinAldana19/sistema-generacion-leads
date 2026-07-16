@@ -6,6 +6,9 @@
   --color-brand: #003558;
   --color-brand-dark: #002540;
   --color-brand-light: #0f5c8c;
+  /* Uso exclusivo: botón "Nueva conversación" -- en ningún otro lugar */
+  --color-accent: #f97316;
+  --color-accent-dark: #ea580c;
   --color-status-confirmed: #16a34a;
   --color-status-review: #ea580c;
   --color-status-discarded: #dc2626;

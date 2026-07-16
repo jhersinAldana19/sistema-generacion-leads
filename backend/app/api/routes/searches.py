@@ -12,6 +12,7 @@ from app.schemas.search import (
     InterpretRequest,
     InterpretResponse,
     SearchCreateRequest,
+    SearchFavoriteUpdate,
     SearchListItemOut,
     SearchOut,
     SearchResultsOut,
@@ -74,15 +75,19 @@ def create_search(
 
 
 @router.get("", response_model=list[SearchListItemOut])
-def list_my_searches(
+def list_my_favorite_searches(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> list[SearchListItemOut]:
+    """Solo las búsquedas marcadas como favoritas -- el listado completo ya
+    está cubierto por el historial de conversaciones, esto es un acceso
+    rápido a las que el usuario decidió que valían la pena, para no duplicar
+    esa vista."""
     rows = (
         db.query(Search, func.count(SearchResult.id))
         .join(Conversation, Conversation.id == Search.conversation_id)
         .outerjoin(SearchResult, SearchResult.search_id == Search.id)
-        .filter(Conversation.user_id == current_user.id)
+        .filter(Conversation.user_id == current_user.id, Search.is_favorite.is_(True))
         .group_by(Search.id)
         .order_by(Search.created_at.desc())
         .limit(100)
@@ -97,6 +102,7 @@ def list_my_searches(
             status=search.status,
             criteria_json=search.criteria_json,
             max_results=search.max_results,
+            is_favorite=search.is_favorite,
             created_at=search.created_at,
             started_at=search.started_at,
             completed_at=search.completed_at,
@@ -105,6 +111,20 @@ def list_my_searches(
         )
         for search, count in rows
     ]
+
+
+@router.patch("/{search_id}/favorite", response_model=SearchOut)
+def set_search_favorite(
+    search_id: int,
+    payload: SearchFavoriteUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> Search:
+    search = _get_owned_search(search_id, current_user, db)
+    search.is_favorite = payload.is_favorite
+    db.commit()
+    db.refresh(search)
+    return search
 
 
 @router.get("/{search_id}", response_model=SearchOut)

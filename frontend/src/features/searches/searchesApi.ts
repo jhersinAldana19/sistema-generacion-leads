@@ -36,7 +36,10 @@ export const searchesApi = {
   listForConversation: (conversationId: number) =>
     api.get<Search[]>(`/api/conversations/${conversationId}/searches`),
 
-  listAll: () => api.get<SearchListItem[]>('/api/searches'),
+  listFavorites: () => api.get<SearchListItem[]>('/api/searches'),
+
+  setFavorite: (searchId: number, isFavorite: boolean) =>
+    api.patch<Search>(`/api/searches/${searchId}/favorite`, { is_favorite: isFavorite }),
 }
 
 const TERMINAL_STATUSES = new Set(['completed', 'failed', 'cancelled'])

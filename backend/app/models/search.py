@@ -1,4 +1,4 @@
-from sqlalchemy import JSON, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import JSON, Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -19,6 +19,7 @@ class Search(Base):
     requested_fields_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     max_results: Mapped[int] = mapped_column(Integer, default=20)
     progress_json: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    is_favorite: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), default=utcnow)
     started_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     completed_at: Mapped[DateTime | None] = mapped_column(DateTime(timezone=True), nullable=True)

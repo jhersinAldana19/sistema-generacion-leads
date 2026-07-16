@@ -59,6 +59,19 @@ def list_lists(
     return db.query(SavedList).filter(SavedList.user_id == current_user.id).all()
 
 
+@router.delete("/{list_id}")
+def delete_list(
+    list_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> dict:
+    saved_list = _get_owned_list(list_id, current_user, db)
+    db.query(SavedListItem).filter(SavedListItem.list_id == list_id).delete()
+    db.delete(saved_list)
+    db.commit()
+    return {"ok": True}
+
+
 @router.post("/{list_id}/items", response_model=SavedListItemOut)
 def add_item(
     list_id: int,

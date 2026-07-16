@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { Plus, X } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Plus, Trash2, X } from 'lucide-react'
 
 import logoWhite from '@/assets/branding/logo-tecport-blanco.webp'
 import { Avatar } from '@/components/ui/avatar'
@@ -38,13 +38,24 @@ export function AppSidebar({
   onClose: () => void
 }) {
   const logout = useLogout()
+  const queryClient = useQueryClient()
   const [showLists, setShowLists] = useState(false)
   const [showSearches, setShowSearches] = useState(false)
   const { data: lists = [] } = useQuery({ queryKey: ['lists'], queryFn: listsApi.list, enabled: showLists })
   const { data: searches = [] } = useQuery({
-    queryKey: ['all-searches'],
-    queryFn: searchesApi.listAll,
+    queryKey: ['favorite-searches'],
+    queryFn: searchesApi.listFavorites,
     enabled: showSearches,
+  })
+
+  const unfavoriteSearch = useMutation({
+    mutationFn: (searchId: number) => searchesApi.setFavorite(searchId, false),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['favorite-searches'] }),
+  })
+
+  const deleteList = useMutation({
+    mutationFn: (listId: number) => listsApi.remove(listId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['lists'] }),
   })
 
   return (
@@ -78,7 +89,7 @@ export function AppSidebar({
               onNewConversation()
               onClose()
             }}
-            className="flex w-full items-center gap-2 rounded-lg bg-brand-light px-3 py-2 text-left text-sm font-semibold text-white shadow-sm hover:bg-white/20"
+            className="flex w-full items-center gap-2 rounded-lg bg-accent px-3 py-2 text-left text-sm font-semibold text-white shadow-sm hover:bg-accent-dark"
           >
             <Plus className="size-4" />
             Nueva conversación
@@ -102,24 +113,38 @@ export function AppSidebar({
             onClick={() => setShowSearches((value) => !value)}
             className="mt-4 w-full px-2 pb-1 pt-2 text-left text-xs font-semibold uppercase tracking-wide text-white/40 hover:text-white/70"
           >
-            Búsquedas {showSearches ? '▾' : '▸'}
+            Búsquedas favoritas {showSearches ? '▾' : '▸'}
           </button>
           {showSearches && (
             <ul className="space-y-0.5 px-0">
-              {searches.length === 0 && <p className="px-2 text-xs text-white/40">Sin búsquedas todavía.</p>}
+              {searches.length === 0 && (
+                <p className="px-2 text-xs text-white/40">
+                  Marca una búsqueda con la estrella para verla aquí.
+                </p>
+              )}
               {searches.map((search) => (
-                <li key={search.id}>
+                <li key={search.id} className="group flex items-center">
                   <button
                     onClick={() => {
                       onSelectSearch(search)
                       onClose()
                     }}
-                    className="flex w-full flex-col rounded-md px-2 py-1.5 text-left hover:bg-white/10"
+                    className="flex min-w-0 flex-1 flex-col rounded-md px-2 py-1.5 text-left hover:bg-white/10"
                   >
                     <span className="truncate text-sm text-white/80">
                       {search.criteria_json.summary_es || search.original_query}
                     </span>
                     <span className="text-xs text-white/40">{search.result_count} resultado(s)</span>
+                  </button>
+                  <button
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      unfavoriteSearch.mutate(search.id)
+                    }}
+                    aria-label="Quitar de favoritas"
+                    className="hidden shrink-0 rounded p-1.5 text-white/50 hover:bg-white/20 hover:text-white group-hover:block"
+                  >
+                    <Trash2 className="size-3.5" />
                   </button>
                 </li>
               ))}
@@ -136,15 +161,25 @@ export function AppSidebar({
             <ul className="space-y-0.5 px-0">
               {lists.length === 0 && <p className="px-2 text-xs text-white/40">Sin listas todavía.</p>}
               {lists.map((list) => (
-                <li key={list.id}>
+                <li key={list.id} className="group flex items-center">
                   <button
                     onClick={() => {
                       onSelectList(list)
                       onClose()
                     }}
-                    className="w-full truncate rounded-md px-2 py-1.5 text-left text-sm text-white/80 hover:bg-white/10"
+                    className="min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-left text-sm text-white/80 hover:bg-white/10"
                   >
                     {list.name}
+                  </button>
+                  <button
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      if (confirm(`¿Eliminar la lista "${list.name}"?`)) deleteList.mutate(list.id)
+                    }}
+                    aria-label="Eliminar lista"
+                    className="hidden shrink-0 rounded p-1.5 text-white/50 hover:bg-white/20 hover:text-white group-hover:block"
+                  >
+                    <Trash2 className="size-3.5" />
                   </button>
                 </li>
               ))}

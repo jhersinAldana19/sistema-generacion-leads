@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { ErrorState } from '@/components/ErrorState'
 import type { Search, SearchResultItem, SearchStatusValue } from '@/types/api'
@@ -17,7 +17,9 @@ export function SearchTimelineItem({
   onSelectResult: (result: SearchResultItem) => void
 }) {
   const [status, setStatus] = useState<SearchStatusValue>(search.status)
+  const [isFavorite, setIsFavorite] = useState(search.is_favorite)
   const isCompleted = status === 'completed'
+  const queryClient = useQueryClient()
 
   const { data: resultsData } = useQuery({
     queryKey: ['search-results', search.id],
@@ -25,9 +27,22 @@ export function SearchTimelineItem({
     enabled: isCompleted,
   })
 
+  const toggleFavorite = useMutation({
+    mutationFn: (next: boolean) => searchesApi.setFavorite(search.id, next),
+    onSuccess: (updated) => {
+      setIsFavorite(updated.is_favorite)
+      queryClient.invalidateQueries({ queryKey: ['favorite-searches'] })
+    },
+  })
+
   return (
     <div className="space-y-3">
-      <CriteriaCard criteria={search.criteria_json} readOnly />
+      <CriteriaCard
+        criteria={search.criteria_json}
+        readOnly
+        isFavorite={isFavorite}
+        onToggleFavorite={() => toggleFavorite.mutate(!isFavorite)}
+      />
 
       {(status === 'pending' || status === 'running') && (
         <SearchProgressCard searchId={search.id} onStatusChange={setStatus} />
