@@ -4,8 +4,11 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.core.database import get_db
 from app.models.conversation import Conversation
+from app.models.export import Export
 from app.models.message import Message
+from app.models.saved_list import SavedListItem
 from app.models.search import Search
+from app.models.search_result import SearchResult
 from app.models.user import User
 from app.schemas.conversation import ConversationCreate, ConversationOut, ConversationUpdate, MessageCreate, MessageOut
 from app.schemas.search import SearchOut
@@ -79,6 +82,23 @@ def delete_conversation(
     db: Session = Depends(get_db),
 ) -> dict:
     conversation = _get_owned_conversation(conversation_id, current_user, db)
+
+    search_ids = [
+        row[0] for row in db.query(Search.id).filter(Search.conversation_id == conversation_id).all()
+    ]
+    if search_ids:
+        result_ids = [
+            row[0] for row in db.query(SearchResult.id).filter(SearchResult.search_id.in_(search_ids)).all()
+        ]
+        if result_ids:
+            db.query(SavedListItem).filter(SavedListItem.search_result_id.in_(result_ids)).delete(
+                synchronize_session=False
+            )
+        db.query(SearchResult).filter(SearchResult.search_id.in_(search_ids)).delete(synchronize_session=False)
+        db.query(Export).filter(Export.search_id.in_(search_ids)).delete(synchronize_session=False)
+        db.query(Search).filter(Search.conversation_id == conversation_id).delete(synchronize_session=False)
+
+    db.query(Message).filter(Message.conversation_id == conversation_id).delete(synchronize_session=False)
     db.delete(conversation)
     db.commit()
     return {"ok": True}
