@@ -5,6 +5,7 @@
 @theme {
   --color-brand: #003558;
   --color-brand-dark: #002540;
+  --color-brand-light: #0f5c8c;
   --color-status-confirmed: #16a34a;
   --color-status-review: #ea580c;
   --color-status-discarded: #dc2626;

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 const badgeVariants = cva('inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium', {
   variants: {
     variant: {
-      neutral: 'bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-dark-text',
+      neutral: 'bg-gray-100 text-gray-800 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:text-dark-text dark:ring-white/10',
       confirmed: 'bg-green-100 text-status-confirmed dark:bg-status-confirmed/20 dark:text-green-300',
       review: 'bg-orange-100 text-status-review dark:bg-status-review/20 dark:text-orange-300',
       discarded: 'bg-red-100 text-status-discarded dark:bg-status-discarded/20 dark:text-red-300',

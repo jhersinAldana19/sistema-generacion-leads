@@ -1,4 +1,5 @@
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -11,6 +12,7 @@ from app.schemas.search import (
     InterpretRequest,
     InterpretResponse,
     SearchCreateRequest,
+    SearchListItemOut,
     SearchOut,
     SearchResultsOut,
     SearchStatusOut,
@@ -69,6 +71,40 @@ def create_search(
 
     enqueue_search(background_tasks, search.id)
     return search
+
+
+@router.get("", response_model=list[SearchListItemOut])
+def list_my_searches(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> list[SearchListItemOut]:
+    rows = (
+        db.query(Search, func.count(SearchResult.id))
+        .join(Conversation, Conversation.id == Search.conversation_id)
+        .outerjoin(SearchResult, SearchResult.search_id == Search.id)
+        .filter(Conversation.user_id == current_user.id)
+        .group_by(Search.id)
+        .order_by(Search.created_at.desc())
+        .limit(100)
+        .all()
+    )
+    return [
+        SearchListItemOut(
+            id=search.id,
+            conversation_id=search.conversation_id,
+            original_query=search.original_query,
+            search_type=search.search_type,
+            status=search.status,
+            criteria_json=search.criteria_json,
+            max_results=search.max_results,
+            created_at=search.created_at,
+            started_at=search.started_at,
+            completed_at=search.completed_at,
+            error_message=search.error_message,
+            result_count=count,
+        )
+        for search, count in rows
+    ]
 
 
 @router.get("/{search_id}", response_model=SearchOut)

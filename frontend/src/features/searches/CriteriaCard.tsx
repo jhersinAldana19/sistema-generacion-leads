@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Search } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 
 import { Badge } from '@/components/ui/badge'
@@ -29,7 +30,7 @@ function InfoRow({ label, values }: { label: string; values: string[] }) {
   if (values.length === 0) return null
   return (
     <div className="space-y-1">
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-dark-text-muted">{label}</p>
+      <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">{label}</p>
       <div className="flex flex-wrap gap-1.5">
         {values.map((value) => (
           <Badge key={value} variant="neutral">
@@ -80,10 +81,15 @@ export function CriteriaCard({
   })
 
   return (
-    <Card className="max-w-xl">
+    <Card className="w-full">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Entendí tu búsqueda</CardTitle>
+          <div className="flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-white/10 dark:text-dark-text">
+              <Search className="size-3.5" />
+            </span>
+            <CardTitle>Entendí tu búsqueda</CardTitle>
+          </div>
           <Badge variant="probable">{ENTITY_TYPE_LABEL[criteria.entity_type] ?? criteria.entity_type}</Badge>
         </div>
         <p className="text-sm text-gray-600 dark:text-dark-text-muted">{criteria.summary_es}</p>
@@ -93,7 +99,7 @@ export function CriteriaCard({
       </CardHeader>
 
       {!isEditing ? (
-        <CardContent className="space-y-3">
+        <CardContent className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
           <InfoRow label="Cargo" values={criteria.job_levels} />
           <InfoRow label="Área" values={criteria.areas} />
           <InfoRow label="Sector" values={criteria.industries} />
@@ -107,7 +113,12 @@ export function CriteriaCard({
               (c) => REQUIRED_CONTACT_OPTIONS.find((o) => o.value === c)?.label ?? c,
             )}
           />
-          <p className="text-xs text-gray-500 dark:text-dark-text-muted">Cantidad máxima: {criteria.max_results}</p>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">
+              Cantidad máxima
+            </p>
+            <p className="mt-1 text-sm text-gray-800 dark:text-dark-text">{criteria.max_results}</p>
+          </div>
         </CardContent>
       ) : (
         <CardContent className="space-y-3">

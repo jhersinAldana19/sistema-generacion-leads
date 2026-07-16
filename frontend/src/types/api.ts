@@ -58,6 +58,10 @@ export interface Search {
   error_message: string | null
 }
 
+export interface SearchListItem extends Search {
+  result_count: number
+}
+
 export interface SearchProgress {
   companies_reviewed: number
   pages_analyzed: number
@@ -129,4 +133,9 @@ export interface SavedListItem {
   search_result_id: number
   notes: string | null
   created_at: string
+}
+
+export interface SavedListItemDetail extends SavedListItem {
+  result_data_json: PersonResultData
+  result_status: ResultStatus
 }

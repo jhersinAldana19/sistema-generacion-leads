@@ -41,29 +41,37 @@ export function SearchProgressCard({
   const progress = data.progress
 
   return (
-    <Card className="max-w-xl">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          {running && <Loader2 className="size-4 animate-spin text-brand dark:text-blue-300" />}
+          <span
+            className={
+              running
+                ? 'flex h-7 w-7 items-center justify-center rounded-full bg-status-probable/10 text-status-probable dark:bg-status-probable/20 dark:text-blue-300'
+                : 'flex h-7 w-7 items-center justify-center rounded-full bg-brand/10 text-brand dark:bg-white/10 dark:text-dark-text'
+            }
+          >
+            <Loader2 className={running ? 'size-3.5 animate-spin' : 'size-3.5'} />
+          </span>
           {STATUS_LABEL[data.status]}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <dl className="grid grid-cols-2 gap-3 text-sm">
+        <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
           <div>
-            <dt className="text-xs text-gray-400 dark:text-dark-text-muted">Empresas revisadas</dt>
+            <dt className="text-xs text-gray-500 dark:text-dark-text-muted">Empresas revisadas</dt>
             <dd className="font-medium text-gray-800 dark:text-dark-text">{progress.companies_reviewed}</dd>
           </div>
           <div>
-            <dt className="text-xs text-gray-400 dark:text-dark-text-muted">Páginas analizadas</dt>
+            <dt className="text-xs text-gray-500 dark:text-dark-text-muted">Páginas analizadas</dt>
             <dd className="font-medium text-gray-800 dark:text-dark-text">{progress.pages_analyzed}</dd>
           </div>
           <div>
-            <dt className="text-xs text-gray-400 dark:text-dark-text-muted">Páginas no accesibles</dt>
+            <dt className="text-xs text-gray-500 dark:text-dark-text-muted">Páginas no accesibles</dt>
             <dd className="font-medium text-gray-800 dark:text-dark-text">{progress.pages_inaccessible}</dd>
           </div>
           <div>
-            <dt className="text-xs text-gray-400 dark:text-dark-text-muted">Candidatos encontrados</dt>
+            <dt className="text-xs text-gray-500 dark:text-dark-text-muted">Candidatos encontrados</dt>
             <dd className="font-medium text-gray-800 dark:text-dark-text">{progress.results_found}</dd>
           </div>
         </dl>

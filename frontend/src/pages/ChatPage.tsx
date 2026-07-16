@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Menu } from 'lucide-react'
 
 import { LoadingState } from '@/components/LoadingState'
 import { cn } from '@/lib/utils'
@@ -10,10 +11,12 @@ import { ChatEmptyState } from '@/features/chat/ChatEmptyState'
 import { ChatMessage } from '@/features/chat/ChatMessage'
 import { conversationsApi } from '@/features/chat/conversationsApi'
 import { SearchTimelineItem } from '@/features/chat/SearchTimelineItem'
-import { CriteriaCard } from '@/features/searches/CriteriaCard'
-import { searchesApi } from '@/features/searches/searchesApi'
+import { SavedListDrawer } from '@/features/lists/SavedListDrawer'
 import { ResultDetailDrawer } from '@/features/results/ResultDetailDrawer'
-import type { Search, SearchCriteria, SearchResultItem } from '@/types/api'
+import { CriteriaCard } from '@/features/searches/CriteriaCard'
+import { SearchHistoryDrawer } from '@/features/searches/SearchHistoryDrawer'
+import { searchesApi } from '@/features/searches/searchesApi'
+import type { SavedList, Search, SearchCriteria, SearchListItem, SearchResultItem } from '@/types/api'
 
 interface DraftCriteria {
   query: string
@@ -28,6 +31,9 @@ export function ChatPage() {
   const [activeConversationId, setActiveConversationId] = useState<number | null>(null)
   const [draft, setDraft] = useState<DraftCriteria | null>(null)
   const [selectedResult, setSelectedResult] = useState<SearchResultItem | null>(null)
+  const [selectedList, setSelectedList] = useState<SavedList | null>(null)
+  const [selectedSearch, setSelectedSearch] = useState<SearchListItem | null>(null)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const { data: conversations = [] } = useQuery({
     queryKey: ['conversations'],
@@ -120,7 +126,7 @@ export function ChatPage() {
   }
 
   return (
-    <div className="flex h-svh bg-white dark:bg-dark-bg">
+    <div className="flex h-svh bg-gray-50 dark:bg-dark-bg">
       <AppSidebar
         user={user}
         conversations={conversations}
@@ -132,9 +138,24 @@ export function ChatPage() {
         onNewConversation={() => createConversation.mutate()}
         onRenameConversation={(id, title) => renameConversation.mutate({ id, title })}
         onDeleteConversation={(id) => deleteConversation.mutate(id)}
+        onSelectList={setSelectedList}
+        onSelectSearch={setSelectedSearch}
+        open={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
 
       <main className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex items-center gap-2 border-b border-gray-100 bg-white p-3 dark:border-dark-border dark:bg-dark-bg md:hidden">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            aria-label="Abrir menú"
+            className="rounded-md p-1.5 text-gray-500 hover:bg-gray-100 dark:text-dark-text-muted dark:hover:bg-white/10"
+          >
+            <Menu className="size-5" />
+          </button>
+          <span className="text-sm font-medium text-gray-700 dark:text-dark-text">Tecport Lead Intelligence</span>
+        </div>
+
         {activeConversationId === null ? (
           <ChatEmptyState
             onSelectSuggestion={(text) => {
@@ -162,7 +183,7 @@ export function ChatPage() {
               {isEmptyConversation ? (
                 <ChatEmptyState onSelectSuggestion={(text) => sendMessage.mutate(text)} />
               ) : (
-                <div className="mx-auto w-full max-w-3xl space-y-4 px-4 py-6">
+                <div className="mx-auto w-full max-w-4xl space-y-4 px-4 py-6">
                   {timelineItems.map((item) =>
                     item.kind === 'message' ? (
                       <ChatMessage
@@ -192,7 +213,7 @@ export function ChatPage() {
             </div>
 
             <div className="border-t border-gray-100 bg-white px-4 py-3 dark:border-dark-border dark:bg-dark-bg">
-              <div className="mx-auto w-full max-w-3xl">
+              <div className="mx-auto w-full max-w-4xl">
                 <ChatComposer onSend={(text) => sendMessage.mutate(text)} disabled={sendMessage.isPending} />
               </div>
             </div>
@@ -204,6 +225,18 @@ export function ChatPage() {
         result={selectedResult}
         onClose={() => setSelectedResult(null)}
         onUpdated={setSelectedResult}
+      />
+
+      <SavedListDrawer
+        list={selectedList}
+        onClose={() => setSelectedList(null)}
+        onSelectResult={setSelectedResult}
+      />
+
+      <SearchHistoryDrawer
+        search={selectedSearch}
+        onClose={() => setSelectedSearch(null)}
+        onSelectResult={setSelectedResult}
       />
     </div>
   )

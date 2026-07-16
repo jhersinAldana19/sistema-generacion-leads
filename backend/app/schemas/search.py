@@ -56,6 +56,10 @@ class SearchOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class SearchListItemOut(SearchOut):
+    result_count: int
+
+
 class SearchStatusOut(BaseModel):
     id: int
     status: str

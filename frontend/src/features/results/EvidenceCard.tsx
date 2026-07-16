@@ -11,7 +11,7 @@ export function EvidenceCard({
 }) {
   return (
     <div className="space-y-2 rounded-md border border-gray-100 bg-gray-50 p-3 dark:border-dark-border dark:bg-white/5">
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-dark-text-muted">Evidencia</p>
+      <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">Evidencia</p>
       <blockquote className="border-l-2 border-gray-300 pl-3 text-sm italic text-gray-700 dark:border-dark-border dark:text-dark-text">
         “{evidenceText}”
       </blockquote>

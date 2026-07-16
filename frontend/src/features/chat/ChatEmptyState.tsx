@@ -19,7 +19,7 @@ export function ChatEmptyState({ onSelectSuggestion }: { onSelectSuggestion: (te
           <button
             key={suggestion}
             onClick={() => onSelectSuggestion(suggestion)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-left text-sm text-gray-600 shadow-sm hover:border-brand hover:text-brand dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-muted dark:hover:border-dark-text-muted dark:hover:text-dark-text"
+            className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-left text-sm text-gray-600 shadow-sm transition-colors hover:border-brand hover:text-brand dark:border-dark-border dark:bg-dark-surface dark:text-dark-text-muted dark:hover:border-dark-text-muted dark:hover:text-dark-text"
           >
             {suggestion}
           </button>

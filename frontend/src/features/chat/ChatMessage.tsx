@@ -6,7 +6,7 @@ export function ChatMessage({ role, content }: { role: 'user' | 'assistant'; con
     <div className={cn('flex', isUser ? 'justify-end' : 'justify-start')}>
       <div
         className={cn(
-          'max-w-xl rounded-lg px-3 py-2 text-sm',
+          'max-w-xl rounded-2xl px-4 py-2.5 text-sm shadow-sm',
           isUser
             ? 'bg-brand text-white dark:bg-dark-surface-hover'
             : 'bg-gray-100 text-gray-800 dark:bg-white/5 dark:text-dark-text',

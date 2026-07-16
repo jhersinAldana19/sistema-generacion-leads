@@ -71,19 +71,19 @@ export function ResultDetailDrawer({
       <SheetBody>
         <section className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-dark-text-muted">Empresa</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">Empresa</p>
             <p className="text-gray-800 dark:text-dark-text">{data.company_name}</p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-dark-text-muted">Sector</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">Sector</p>
             <p className="text-gray-800 dark:text-dark-text">{data.industry ?? '—'}</p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-dark-text-muted">País</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">País</p>
             <p className="text-gray-800 dark:text-dark-text">{data.country ?? '—'}</p>
           </div>
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-dark-text-muted">Ciudad</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">Ciudad</p>
             <p className="text-gray-800 dark:text-dark-text">{data.city ?? '—'}</p>
           </div>
         </section>
@@ -112,7 +112,7 @@ export function ResultDetailDrawer({
 
         {data.missing_fields.length > 0 && (
           <section className="border-t border-gray-100 pt-3 dark:border-dark-border">
-            <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-dark-text-muted">Campos faltantes</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">Campos faltantes</p>
             <p className="mt-1 text-sm text-gray-500 dark:text-dark-text-muted">
               {data.missing_fields.map((field) => MISSING_FIELD_LABEL[field] ?? field).join(', ')}
             </p>

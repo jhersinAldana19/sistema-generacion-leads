@@ -11,7 +11,7 @@ export function ContactMethodBadge({
 
   return (
     <div className="flex flex-col gap-0.5">
-      <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-dark-text-muted">{label}</p>
+      <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-dark-text-muted">{label}</p>
       {value ? (
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-800 dark:text-dark-text">{value}</span>
@@ -22,7 +22,7 @@ export function ContactMethodBadge({
           )}
         </div>
       ) : (
-        <span className="text-sm text-gray-400 dark:text-dark-text-muted">No encontrado</span>
+        <span className="text-sm text-gray-500 dark:text-dark-text-muted">No encontrado</span>
       )}
     </div>
   )

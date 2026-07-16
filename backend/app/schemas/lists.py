@@ -30,3 +30,13 @@ class SavedListItemOut(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class SavedListItemDetailOut(BaseModel):
+    id: int
+    list_id: int
+    search_result_id: int
+    notes: str | None = None
+    created_at: datetime
+    result_data_json: dict
+    result_status: str

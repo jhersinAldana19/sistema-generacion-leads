@@ -3,6 +3,7 @@ import type {
   InterpretResponse,
   Search,
   SearchCriteria,
+  SearchListItem,
   SearchResultsOut,
   SearchStatusOut,
 } from '@/types/api'
@@ -34,6 +35,8 @@ export const searchesApi = {
 
   listForConversation: (conversationId: number) =>
     api.get<Search[]>(`/api/conversations/${conversationId}/searches`),
+
+  listAll: () => api.get<SearchListItem[]>('/api/searches'),
 }
 
 const TERMINAL_STATUSES = new Set(['completed', 'failed', 'cancelled'])
