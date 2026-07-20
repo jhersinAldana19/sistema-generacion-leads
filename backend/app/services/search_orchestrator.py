@@ -189,8 +189,26 @@ def run_search(search_id: int) -> None:
         search.completed_at = utcnow()
         db.commit()
     except Exception as exc:  # noqa: BLE001 - se registra el error, no se relanza (BackgroundTask)
-        search.status = "failed"
-        search.error_message = str(exc)
-        db.commit()
+        error_message = str(exc)
+        try:
+            db.rollback()
+            search.status = "failed"
+            search.error_message = error_message
+            db.commit()
+        except Exception:
+            # la sesion original puede haber quedado con la conexion muerta
+            # (p.ej. el pooler de Supabase la cerro por inactividad durante el
+            # scraping) -- se reintenta marcar el fallo con una sesion nueva
+            # para no dejar la busqueda atascada en "running" para siempre.
+            db.rollback()
+            retry_db = SessionLocal()
+            try:
+                retry_search = retry_db.get(Search, search_id)
+                if retry_search is not None:
+                    retry_search.status = "failed"
+                    retry_search.error_message = error_message
+                    retry_db.commit()
+            finally:
+                retry_db.close()
     finally:
         db.close()
